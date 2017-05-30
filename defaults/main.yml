@@ -1,0 +1,15 @@
+---
+# defaults file for AAROC.fg-ge
+prerequisites:
+  Debian:
+    - mysql-client
+    - libmysql-java
+    - openjdk-7-jdk
+    - ant
+    - maven
+    - build-essential
+    - ruby-dev
+    - libapache2-mod-wsgi
+    - git
+    - ldap-utils
+    - jq
