@@ -1,0 +1,28 @@
+---
+
+# Build jsaga-rocci-adaptor
+- name: rocci_bld | Build jsaga-rocci-adaptor
+  command: ant all
+  args:
+    chdir: "/root/jsaga-adaptor-rocci"
+    creates: "/root/jsaga-adaptor-rocci/dist/jsaga-adaptor-rocci.jar"
+  register: rocci
+# Stat jsaga-adaptor-rocci.jar
+- name: jsaga-adaptor-rocci.jar | Stat jsaga-adaptor-rocci.jar
+  stat:
+    path: "/root/APIServerDaemon/lib/jsaga-adaptor-rocci.jar"
+  register: rocci_jar
+# Place jsaga-rocci-adaptor jar into APIServerdaemon lib/
+- name: rocci_cpy | Copy jsaga-rocci-adaptor jar to APIServerDaemon lib directory
+  copy:
+    remote_src: true
+    src: "/root/jsaga-adaptor-rocci/dist/jsaga-adaptor-rocci.jar"
+    dest: "/root/APIServerDaemon/lib/jsaga-adaptor-rocci.jar"
+    mode: 0644
+  when: rocci.changed or not rocci_jar.stat.exists
+# Use EGI FedCloud installation script
+- name: occicli | Install EGI-FedCloud OCCI cli
+  shell: curl -L http://go.egi.eu/fedcloud.ui | /bin/bash -
+  args:
+    executable: /bin/bash
+    creates: /usr/bin/occi

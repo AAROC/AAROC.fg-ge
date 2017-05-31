@@ -1,6 +1,19 @@
+# defaults file for AAROC.fg-ge
 ---
 mysql_port: 3306
-# defaults file for AAROC.fg-ge
+fg_db_user: db_user
+apt_keys:
+  - https://dist.eugridpma.info/distribution/igtf/current/GPG-KEY-EUGridPMA-RPM-3
+  - http://repository.egi.eu/community/keys/APPDBCOMM-DEB-PGP-KEY.asc
+  - http://repository.egi.eu/sw/production/umd/UMD-DEB-PGP-KEY
+apt_repos:
+  - repo: deb http://repository.egi.eu/sw/production/cas/1/current egi-igtf core
+    filename: egi-trustanchors.list
+  - repo: deb http://repository.egi.eu/sw/production/umd/3/debian/ squeeze main
+    filename: UMD-3-base.list
+  - repo: deb http://repository.egi.eu/sw/production/umd/3/debian/ squeeze-updates main
+    filename: UMD-3-updates.list
+
 prerequisites:
   RedHat: []
   Debian:

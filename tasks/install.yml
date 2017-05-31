@@ -1,0 +1,31 @@
+---
+# Install system dependencies
+- name: Ensure prerequisites
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ prerequisites[ansible_os_family]}}"
+
+# Get APIServerDaemon git repository
+- name: Get APIServerDaemon repo
+  git:
+    repo: "{{ fg_APIServerDaemon_git }}"
+    dest: "/root/APIServerDaemon"
+    version: "{{ fg_APIServerDaemon_gitver }}"
+    force: yes
+
+# Get rOCCI adaptor
+- name: Get JSAGA rOCCI adaptor
+  git:
+    repo: "{{ fg_rOCCI_adaptor_git }}"
+    dest: "/root/jsaga-adaptor-rocci"
+    version: "{{ fg_rOCCI_adaptor_gitver }}"
+    force: yes
+
+# Get the GridCloudEngine
+- name: Get Grid and Cloud Engine
+  git:
+    repo: "{{ fg_GridnCloudEngine_git }}"
+    dest: "/root/grid-and-cloud-engine"
+    version: "{{ fg_GridnCloudEngine_gitver }}"
+    force: yes

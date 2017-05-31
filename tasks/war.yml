@@ -1,0 +1,49 @@
+---
+#
+# APIServerDaemon .properties files
+#
+# Use template files to create .properties files
+#
+
+# log4j.properties files
+- name: log4j_prop | Configure log4j.properties file
+  template:
+    src: templates/asd_log4j.properties.j2
+    dest: "/root/APIServerDaemon/web/WEB-INF/log4j.properties"
+    backup: yes
+    mode: 0644
+# APIServerDaemon.properties file
+- name: asd_prop | Configure APIServerDaemon file
+  template:
+    src: templates/asd_APIServerDaemon.properties.j2
+    dest: "/root/APIServerDaemon/web/WEB-INF/classes/it/infn/ct/APIServerDaemon.properties"
+    backup: yes
+    mode: 0644
+
+#
+# Build APIServerDaemon
+#
+
+# Create the web/WEB-INF/lib
+- name: mkwebinflib | create APIServerDaemon web/WEB-INF/lib dir
+  file:
+    path: "/root/APIServerDaemon/web/WEB-INF/lib"
+    state: directory
+    mode: 0755
+# Build APIServerDaemon war file
+- name: bld_asdwar | Build the APIServerDaemon war file
+  shell: ant all
+  args:
+    executable: /bin/bash
+    chdir: "/root/APIServerDaemon"
+    creates: "/root/APIServerDaemon/dist/APIServerDaemon.war"
+  register: asdwar
+# Deploy APIServerDaemon war file into Tomcat webapps dir
+- name: dplyasd | Deploy APIServerDaemon.war file
+  copy:
+    src: "/root/APIServerDaemon/dist/APIServerDaemon.war"
+    dest: /var/lib/tomcat7/webapps/APIServerDaemon.war
+    owner: "{{ fg_user }}"
+    group: "{{ fg_user }}"
+    mode: 0644
+  when: asdwar.changed
