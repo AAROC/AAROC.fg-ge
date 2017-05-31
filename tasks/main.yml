@@ -1,5 +1,7 @@
 ---
 # tasks file for AAROC.fg-ge
+
+# Install system dependencies
 - name: Ensure prerequisites
   package:
     name: "{{ item }}"
@@ -29,3 +31,73 @@
     dest: "/root/grid-and-cloud-engine"
     version: "{{ fg_GridnCloudEngine_gitver }}"
     force: yes
+
+- name: tomcat_usr | Tomcat users.xml configuration
+  blockinfile:
+    dest: "{{ tomcat_location }}/conf/tomcat-users.xml"
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+    insertbefore: "</tomcat-users>"
+    block: |
+             <role rolename="manager-gui"/>
+             <role rolename="manager-script"/>
+             <role rolename="tomcat"/>
+             <role rolename="liferay"/>
+             <user username="{{ tomcat_user }}" password="{{ tomcat_pass }}" roles="tomcat,liferay,manager-gui,manager-script"/>
+    backup: yes
+  register: tomcat_usr
+
+- name: tomcat_utpool | Tomcat jdbc/UserTrackingPool in server.xml configuration
+  blockinfile:
+    dest: "{{ tomcat_location }}conf/server.xml"
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+    insertbefore: "</GlobalNamingResources>"
+    block: |
+             <Resource name="jdbc/UserTrackingPool"
+                       auth="Container"
+                       type="javax.sql.DataSource"
+                       username="{{ ut_db_user }}"
+                       password="{{ ut_db_password }}"
+                       driverClassName="com.mysql.jdbc.Driver"
+                       description="UsersTrackingDB connection"
+                       url="jdbc:mysql://{{ ut_db_host }}:{{ ut_db_port }}/{{ ut_db_name }}"
+                       maxAge="30000"
+                       testOnBorrow="true"
+                       testWhileIdle="true"
+                       validationInterval="0"
+                       initialSize="3"
+                       maxTotal="100"
+                       maxIdle="30"
+                       maxWaitMillis="10000"/>
+             <Resource name="jdbc/gehibernatepool"
+                       auth="Container"
+                       type="javax.sql.DataSource"
+                       username="{{ ut_db_user }}"
+                       password="{{ ut_db_password }}"
+                       driverClassName="com.mysql.jdbc.Driver"
+                       description="UsersTrackingDB connection"
+                       url="jdbc:mysql://{{ ut_db_host }}:{{ ut_db_port }}/{{ ut_db_name }}"
+                       maxAge="30000"
+                       testOnBorrow="true"
+                       testWhileIdle="true"
+                       validationInterval="0"
+                       initialSize="3"
+                       maxTotal="100"
+                       maxIdle="30"
+                       maxWaitMillis="10000"/>
+    backup: yes
+
+- name: Put mysql-connector in the path
+  file:
+    dest: "{{ tomcat_location }}/lib/mysql-connector-java.jar"
+    src: "/usr/share/java/mysql-connector-java.jar"
+    state:  link
+
+- name: Create user tracking database
+  mysql_db:
+    name: userstracking
+    state: import
+    login_host: "{{ fg_db_host }}"
+    login_port: "{{ mysql_port }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    target: "/root/grid-and-cloud-engine/UsersTrackingDB/UsersTrackingDB.sql"
