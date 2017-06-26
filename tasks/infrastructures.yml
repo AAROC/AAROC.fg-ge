@@ -12,29 +12,7 @@
 #
 
 # Configure the SSH infrastructure host parameter
-- name: sshtst_host | Configure SSH infrastructure host parameter
-  become: yes
-  become_user: futuregateway
-  shell: . /home/{{ fg_user }}/.profile;asdb "update infrastructure_parameter set pvalue='ssh://{{test_ssh_host}}:{{test_ssh_port}}' where pname='jobservice' and infra_id=1;"
-  args:
-    executable: /bin/bash
-    chdir: "/home/{{ fg_user }}"
-  #when: only 1st time APIServerDaemon installs
 # Configure the SSH infrastructure user parameter
-- name: sshtst_user | Configure SSH infrastructure user parameter
-  become: yes
-  become_user: futuregateway
-  shell: . /home/{{ fg_user }}/.profile;asdb "update infrastructure_parameter set pvalue='{{ tester_user }}' where pname='username' and infra_id=1;"
-  args:
-    executable: /bin/bash
-    chdir: "/home/{{ fg_user }}"
-  #when: only 1st time APIServerDaemon installs
+#when: only 1st time APIServerDaemon installs
 # Configure the SSH infrastructure user password parameter
-- name: sshtst_pass | Configure SSH infrastructure password parameter
-  become: yes
-  become_user: futuregateway
-  shell: . /home/{{ fg_user }}/.profile;asdb "update infrastructure_parameter set pvalue='{{ tester_pass }}' where pname='password' and infra_id=1;"
-  args:
-    executable: /bin/bash
-    chdir: "/home/{{ fg_user }}"
-  #when: only 1st time APIServerDaemon installs
+#when: only 1st time APIServerDaemon installs

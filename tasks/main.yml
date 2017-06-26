@@ -2,13 +2,8 @@
 # tasks file for AAROC.fg-ge
 - include: repositories.yml
 - include: install.yml
-# - include: configure_db.yml
-# - include: config_adaptors.yml
-# - include: occi.yml
-# - include: war.yml
+- include: configure_db.yml
+- include: config_adaptors.yml
+#- include: occi.yml
+- include: war.yml
 # - include: infrastructures.yml
-#- name: check that all adaptors jars have been downloaded ...
-#
-#
-# Build custom JSAGA adaptors
-#
